@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<style>
+		body {background-color: whitesmoke;}
+	</style>
+	<meta charset="ISO-8859-1">
+	<title>Capgemini University</title>
+	<div style="background-color:lightblue">
+		<hr>
+		<span>
+			<h1 align="center"><img src="../server/images/capgemini_logo.png" width="50px" height="50px"> Capgemini University | Apply</h1>
+		</span>
+		<hr>
+		<div style="background-color: lightblue;
+			 		text-decoration: none;
+	  				overflow: hidden;
+	  				color: white;">
+			<a href ="../client/home.html">Home</a>
+			<a href="../client/degrees.html">Degrees</a>
+			<a href="../client/courses.html">Courses</a>
+			<a class="active" href="../client/apply.html">Apply</a>
+		</div>
+		<hr>
+	</div>
+	<br><br>
+</head>
+<body>
+	<form>
+		<h1 align="center">Student Application</h1>
+		<div align="center">
+			<table>
+				<tr>
+					<td>First Name:</td>
+					<td><input type="text" name="firstName" size="20"  placeholder="Please enter first name"></td>
+				</tr>
+				<tr>
+					<td>Last Name:</td>
+					<td><input type="text" name="lastName" size="20"  placeholder="Please enter last name"></td>
+				</tr>
+				<tr>
+					<td>Home Address:</td>
+					<td>
+						<textarea rows="5" cols="20" id="address"></textarea>
+					</td>
+				</tr>
+				<tr>
+					<td>Mobile Number:</td>
+					<td>
+						<input type="text" name="mobileNo" size="20" pattern="[0-9]{10}" >
+					</td>
+				</tr>
+<!-- 				<tr> -->
+<!-- 					<td>Age:</td> -->
+<!-- 					<td> -->
+<!-- 						<input type="number" name="age" size="20"> -->
+<!-- 					</td> -->
+<!-- 				</tr> -->
+<!-- 				<tr> -->
+				<tr>
+					<td>Date Of Birth</td>
+					<td>
+						<input type="date" name="dob">
+					</td>
+				</tr>
+				
+				<tr>
+					<td>Gender</td>
+					<td>
+						<input type="radio" name="gender">Male
+						<input type="radio" name="gender">Female
+						<input type="radio" name="gender">Other
+						
+					</td>
+				
+				</tr>
+					<td>College Year:</td>
+					<td>
+						<input name="collegeYear" size="20" list="collegeYear">
+						<datalist id="collegeYear">
+							<option>Freshman</option>
+							<option>Sophomore</option>
+							<option>Junior</option>
+							<option>Senior</option>
+							<option>Graduate</option>
+						</datalist>
+					</td>
+				</tr>
+<!-- 				<tr> -->
+<!-- 					<td>Degree(s)</td> -->
+<!-- 					<td> -->
+<!-- 						<input type="checkbox" name="bus">Business -->
+<!-- 						<input type="checkbox" name="cs">Computer Science -->
+<!-- 						<input type="checkbox" name="ds">Data Science -->
+<!-- 						<input type="checkbox" name="it">Information Technology -->
+						
+<!-- 					</td> -->
+				
+<!-- 				</tr> -->
+				<tr>
+					<td>Degree</td>
+					<td>
+						<input name="degreeName" size="20" list="degreeName">
+						<datalist id="degreeName">
+							<option>Business</option>
+							<option>Computer Science</option>
+							<option>Data Science</option>
+							<option>Information Technology</option>
+						</datalist>
+					</td>
+				</tr>
+<!-- 				<tr> -->
+<!-- 					<td>Application Fee</td> -->
+<!-- 					<td> -->
+<!-- 						<input type="range" name="fees" min="12000" max="100000"> -->
+<!-- 					</td> -->
+<!-- 				</tr> -->
+				
+				<tr>
+					<td></td>
+					<td>
+						<input type="submit" name="Save" value="Save">
+						<input type="button" name="Update" value="Update">
+						<input type="reset" name="Clear" value="Clear">
+					</td>
+				</tr>
+			</table>
+		
+		</div>
+	</form>
+</body>
+</html>
