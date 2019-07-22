@@ -1,0 +1,150 @@
+-- Reynerio Rubio
+-- MySQL
+-- Question 10
+
+-- Create tables
+CREATE TABLE products(
+  product_number VARCHAR(10) UNIQUE PRIMARY KEY,
+  product_name  VARCHAR(25),
+  selling_price NUMERIC(10,2),
+  manufacturer_name VARCHAR(50),
+  product_description VARCHAR(25)
+);
+
+CREATE TABLE clients(
+  client_number VARCHAR(10) UNIQUE PRIMARY KEY,
+  client_name VARCHAR(50),
+  address VARCHAR(50),
+  city VARCHAR(25),
+  pin_code NUMERIC(10),
+  state VARCHAR(25),
+  total_balance NUMERIC(10,2)
+);
+
+CREATE TABLE orders(
+  order_number VARCHAR(10) UNIQUE PRIMARY KEY,
+  order_date DATE,
+  client_number VARCHAR(10) references clients(client_number),
+  salesman_number VARCHAR(10) references salesmen(salesman_number),
+  is_payment_billed_by_party BOOLEAN,
+  delivery_date DATE
+);
+
+CREATE TABLE salesmen(
+  salesman_number VARCHAR(10) UNIQUE PRIMARY KEY,
+  salesman_name VARCHAR(50),
+  adress VARCHAR(50),
+  city VARCHAR(25),
+  pin_code NUMERIC(10),
+  state VARCHAR(25),
+  salary NUMERIC(10,2),
+  delivery_date DATE,
+  total_quanitiy_ordered INTEGER,
+  product_rate NUMERIC(10,2)
+);
+
+-- INSERT VALUES INTO TABLES
+INSERT INTO products VALUES('P01','Accord','23000.50', 'Honda','New Mid-size Sedan');
+INSERT INTO products VALUES('P02','Camry','24000.00', 'Toyota','New Mid-size Sedan');
+INSERT INTO products VALUES('P03','Altima','24100.25', 'Nissan','New Mid-size Sedan');
+INSERT INTO products VALUES('P04','F-150','28155.33', 'Ford','New Pickup Truck');
+INSERT INTO products VALUES('P05','RAM 1500','31895.25', 'RAM','New Pickup Truck');
+INSERT INTO products VALUES('P6','Silverado','28300.10', 'Chevrolet','New Pickup Truck');
+INSERT INTO products VALUES('P07','Explorer','36675.10', 'Ford', 'New SUV');
+INSERT INTO products VALUES('P08','CR-V','24450.75', 'Honda','New SUV');
+INSERT INTO products VALUES('P09','Grand Cherokee','23800.10', 'Jeep','New SUV');
+INSERT INTO products VALUES('P10','Model X','81000.10', 'Tesla','New SUV');
+INSERT INTO products VALUES('P11','Accord','3000.50', 'Honda','Used Mid-size Sedan');
+INSERT INTO products VALUES('P12','Camry','2400.00', 'Toyota','Used Mid-size Sedan');
+INSERT INTO products VALUES('P13','Altima','4100.25', 'Nissan','Used Mid-size Sedan');
+INSERT INTO products VALUES('P15','F-150','59155.33', 'Ford','Used Pickup Truck');
+
+INSERT INTO clients VALUES('CN01001','John Doe','123 Tree St.', 'Redoakville','10001', 'NY', '50000');
+INSERT INTO clients VALUES('CN01002','Joe Smith','456 Tree St.', 'Mapleville','10002', 'NY', '65000');
+INSERT INTO clients VALUES('CN01003','Sam Smith','321 Fruit Rd.', 'Strawberrytown','10003', 'NJ', '72000');
+INSERT INTO clients VALUES('CN01004','Josh Adams','654 Fruit Rd.', 'Strawberrytown','10003', 'NJ', '87500');
+INSERT INTO clients VALUES('CN01005','Jacob Mills','123 Vegetable St.', 'Brocolliville','10004', 'MA', '69000');
+
+INSERT INTO salesmen VALUES('S010001','Clark Kent','123 80 St.', 'Smallville', '10006', 'NY', '75000', '2019-01-01', '1', '1234.45');
+INSERT INTO salesmen VALUES('S010002','Kevin Johnson','987 56 St.', 'Tinytown', '10007', 'NY', '77000', '2019-02-01', '2', '5345.45');
+INSERT INTO salesmen VALUES('S010003','Steve Green','564 24 St.', 'Bigtown', '10008', 'MA', '78000', '2018-03-01', '1', '5345.45');
+
+INSERT INTO orders VALUES('ON01001','2019-02-15','CN01001','S010001', TRUE, '2019-03-15');
+INSERT INTO orders VALUES('ON01002','2019-02-17','CN01002','S010001', TRUE, '2019-03-17');
+INSERT INTO orders VALUES('ON01003','2019-02-19','CN01003','S010003', TRUE, '2019-03-19');
+INSERT INTO orders VALUES('ON01004','2019-02-21','CN01003','S010002', TRUE, '2019-03-21');
+INSERT INTO orders VALUES('ON01005','2019-02-22','CN01004','S010003', TRUE, '2019-03-22');
+INSERT INTO orders VALUES('ON01006','2019-02-23','CN01005','S010001', TRUE, '2019-03-23');
+INSERT INTO orders VALUES('ON01007','2019-03-21','CN01001','S010002', FALSE, '2019-03-21');
+INSERT INTO orders VALUES('ON01008','2019-02-22','CN01002','S010003', TRUE, '2019-03-22');
+INSERT INTO orders VALUES('ON01009','2019-02-23','CN01004','S010003', FALSE, '2019-03-23');
+
+-- 10a Retrieve the list of names and the cities of all the clients
+SELECT client_name, city
+FROM clients;
+
+-- 10b List the various products available
+SELECT *
+FROM products;
+
+-- 10c Find the names of all clients having 'a' as the second letter in their names.
+SELECT *
+FROM clients
+WHERE client_name LIKE '_a%';
+
+-- 10d List all the cleints who are located in Pune.
+SELECT *
+FROM clients
+WHERE city = 'Pune';
+
+-- 10e Find the products whose selling price is greater than 2000 and less than or equal to 5000.
+SELECT *
+FROM products
+WHERE selling_price > 2000 AND selling_price <= 5000;
+
+-- 10f Add a new column 'NEW_PRICE' into the product_master table.
+ALTER TABLE products
+ADD COLUMN new_price NUMERIC(10,2);
+
+-- 10g Rename the column product_rate of sales_order_details to new_product_rate
+ALTER TABLE salesmen
+CHANGE product_rate new_product_rate NUMERIC(10,2);
+
+-- 10h List the products in sorted order of their description
+SELECT *
+FROM products
+ORDER BY product_description ASC;
+
+-- 10i Display the order number and date on which the clients palced their order.
+SELECT order_number, order_date
+FROM orders
+ORDER BY order_date ASC;
+
+-- 10j Delete all the records having delivery date before 25th August, 2008
+DELETE FROM orders
+WHERE delivery_date < '2008-08-25';
+
+-- 10k Change the delivery date of order numbe rON01008 to 16-08-08
+UPDATE orders
+SET delivery_date = '2016-08-08'
+WHERE order_number = 'ON01008';
+
+-- 10l Change the bal_due of client_no CN01003 to 1200
+UPDATE clients
+SET total_balance = 1200
+WHERE client_number = 'CN01003';
+
+-- 10m Find the product with description as 'HDD1034' and 'DVDRW'
+SELECT *
+FROM products
+WHERE product_name = 'HDD1034' OR product_name = 'DVDRW';
+
+-- 10n List the names, city, and state of the clients not in the state of 'Maharashtra'
+SELECT client_name, city, state
+FROM clients
+WHERE NOT state = 'Maharashtra';
+
+-- 10o List of all orders that were cancelled in the month of March.
+SELECT *
+FROM orders
+WHERE is_payment_billed_by_party = false AND month(delivery_date) = 3;

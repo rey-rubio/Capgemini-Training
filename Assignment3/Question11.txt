@@ -1,0 +1,164 @@
+-- Reynerio Rubio
+-- MySQL
+-- Question 11
+
+-- Create tables
+CREATE TABLE students(
+  student_id VARCHAR(10) PRIMARY KEY NOT NULL,
+  student_name VARCHAR(50),
+  address VARCHAR(50),
+  semester VARCHAR(50),
+  program VARCHAR(50),
+  cum_gpa NUMERIC(4,3),
+  -- FOREIGN KEY(program_id) REFERENCES academic_programs(program_id);
+  -- FOREIGN KEY(department_name) REFERENCES departments(department_name);
+  program_id VARCHAR(10),
+  department_name VARCHAR(50)
+);
+
+
+CREATE TABLE academic_programs(
+  program_id VARCHAR(10) PRIMARY KEY NOT NULL,
+  program_name VARCHAR(50) UNIQUE,
+  duration INTEGER,
+  -- FOREIGN KEY (course_title) REFERENCES courses(course_title)
+  course_number VARCHAR(50)
+);
+
+CREATE TABLE departments(
+  department_id INTEGER UNIQUE,
+	department_name VARCHAR(50) UNIQUE NOT NULL,
+	head_of_department VARCHAR(25),
+	-- FOREIGN KEY(employee_id) REFERENCES teachers(employee_id),
+	-- FOREIGN KEY(course_number) REFERENCES courses(course_number)
+  employee_id VARCHAR(10),
+  course_number VARCHAR(50)
+);
+
+CREATE TABLE teachers(
+  employee_id VARCHAR(10) UNIQUE NOT NULL,
+  teacher_name VARCHAR(50),
+  designation VARCHAR(50),
+	-- FOREIGN KEY(department_name) REFERENCES departments(department_name)
+  department_name VARCHAR(50)
+);
+
+CREATE TABLE courses(
+  course_number VARCHAR(50) UNIQUE NOT NULL,
+  course_title VARCHAR(50),
+  credits INTEGER
+  -- offering_department VARCHAR(50)
+  -- FOREIGN KEY(department_name) REFERENCES departments(department_name)
+);
+
+CREATE TABLE semesters(
+	semester_name VARCHAR(25) UNIQUE NOT NULL,
+  student_id VARCHAR(10),
+  program_id VARCHAR(10),
+  employee_id VARCHAR(10),
+  course_number VARCHAR(50)
+);
+
+-- Add constraints
+ALTER TABLE students ADD CONSTRAINT program_id_student_fk FOREIGN KEY(program_id) REFERENCES academic_programs(program_id);
+ALTER TABLE students ADD CONSTRAINT department_name_student_fk FOREIGN KEY(department_name) REFERENCES departments(department_name);
+
+ALTER TABLE academic_programs ADD CONSTRAINT prog_course_number_fk FOREIGN KEY (course_number) REFERENCES courses(course_number);
+
+ALTER TABLE departments ADD CONSTRAINT employee_id_dept_fk FOREIGN KEY(employee_id) REFERENCES teachers(employee_id);
+ALTER TABLE departments ADD CONSTRAINT course_number_dept_fk FOREIGN KEY(course_number) REFERENCES courses(course_number);
+
+ALTER TABLE teachers ADD CONSTRAINT department_name_teacher_fk FOREIGN KEY(department_name) REFERENCES departments(department_name);
+
+-- ALTER TABLE courses ADD CONSTRAINT department_name_course_fk FOREIGN KEY(department_name) REFERENCES departments(department_name);
+ALTER TABLE semesters ADD CONSTRAINT student_id_sem_fk FOREIGN KEY(student_id) REFERENCES students(student_id);
+ALTER TABLE semesters ADD CONSTRAINT program_id_sem_fk FOREIGN KEY(program_id) REFERENCES academic_programs(program_id);
+ALTER TABLE semesters ADD CONSTRAINT employee_id_sem_fk FOREIGN KEY(employee_id) REFERENCES teachers(employee_id);
+ALTER TABLE semesters ADD CONSTRAINT course_number_sem_fk FOREIGN KEY(course_number) REFERENCES courses(course_number);
+
+-- 11a Find all the student's name, city, course allotted from the CSE department.
+SELECT s.student_name, s.address
+FROM students s INNER JOIN departments d
+ON d.department_name = s.department_name
+WHERE d.department_name = 'CSE';
+
+-- 11b List the total number of faculty in the CSE department.
+SELECT COUNT(t.employee_id)
+FROM teachers t
+INNER JOIN departments d
+	ON d.department_name = t.department_name
+	WHERE d.department_name = 'CSE';
+
+-- 11c List the available courses from the CSE department.
+SELECT c.course_title FROM courses c INNER JOIN departments d
+	ON d.course_number = c.course_number
+	WHERE d.department_name = 'CSE';
+
+-- 11d List all students in a particular semester.
+SELECT *
+FROM students
+WHERE semester = 'Fall';
+
+-- 11e List the students who earned CPGA greater than or equal to 8.5
+SELECT student_name
+FROM students
+WHERE cum_gpa >= 8.5;
+
+-- 11f How many subjects are registered by a student in each semesters.
+SELECT COUNT(sem.program_id)
+FROM semesters sem
+LEFT JOIN academic_programs p
+	ON p.program_id = sem.program_id;
+
+-- 11g List the common students who are allotted the same courses of both the program MCA and M.Tech
+SELECT *
+FROM students s
+LEFT JOIN academic_programs p
+	ON p.program_id = s.program_id
+	WHERE p.program_name = 'MCA' AND p.program_name = 'M.Tech';
+
+-- 11h List the total number of students enrolled in the subject 'DBMS'
+SELECT COUNT(s.student_id)
+FROM students s
+LEFT JOIN academic_programs p
+	ON p.program_id = s.program_id
+	WHERE p.program_name = 'DBMS';
+
+-- 11i Retrieve the semester of the student under DMBS subject.
+SELECT sem.semester_name
+FROM semesters sem
+INNER JOIN academic_programs p
+	ON p.program_id = sem.program_id
+	WHERE p.program_name = 'DBMS';
+
+-- 11j Retrieve all the student name and arrange into ascending order.
+SELECT student_name
+FROM students
+ORDER BY student_name ASC;
+
+-- 11k Modify a student address Chennai to Pune where sdt_id = 'CSI08002'
+UPDATE students
+SET address = 'Pune'
+WHERE student_id = 'CSI08002';
+
+-- 11l Find the total credit point of students required to complete a course like MCA
+SELECT SUM(c.credits)
+FROM courses c
+LEFT JOIN academic_programs p
+	ON p.course_number = c.course_number
+	WHERE p.program_name = 'MCA';
+
+-- 11m List all the courses which are related to computer science
+SELECT *
+FROM courses c LEFT JOIN departments d
+	ON d.course_number = c.course_number
+	WHERE d.department_name = '%Computer%Science%';
+
+-- 11n Retrieve all the students located at 'Pune'
+SELECT *
+FROM students
+WHERE address LIKE '%Pune';
+
+-- 11o Find the total number of departments in our database
+SELECT count(department_id)
+FROM departments;
