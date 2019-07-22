@@ -1,0 +1,234 @@
+-- Reynerio Rubio
+-- MySQL
+-- Question 8
+
+-- Create tables
+CREATE TABLE flights(
+  flno INTEGER unique,
+  flight_from VARCHAR(50),
+  flight_to VARCHAR(50),
+  distance INTEGER,
+  departs TIME,
+  arrives TIME,
+  price numeric(10,2)
+);
+
+CREATE TABLE aircrafts(
+  aid INTEGER unique,
+  aname VARCHAR(50),
+  cruisingrange INTEGER
+);
+
+CREATE TABLE certified(
+  eid INTEGER,
+  aid INTEGER
+);
+
+CREATE TABLE employees(
+  eid INTEGER,
+  ename VARCHAR(50),
+  salary INTEGER
+);
+
+-- INSERT VALUES INTO TABLES
+INSERT INTO flights VALUES('001', 'New York', 'Chicago', '790','12:25:00', '14:00:00', '215.50');
+INSERT INTO flights VALUES('002', 'Chicago', 'New York', '790','14:25:00', '16:30:00', '225.50');
+INSERT INTO flights VALUES('003', 'New York', 'Chicago', '790','16:45:00', '18:45:00', '245.50');
+INSERT INTO flights VALUES('004', 'Chicago', 'New York', '790','18:25:00', '20:15:00', '235.50');
+INSERT INTO flights VALUES('005', 'New York', 'Chicago', '790','20:25:00', '22:15:00', '225.50');
+INSERT INTO flights VALUES('006', 'Chicago', 'New York', '790','22:45:00', '23:45:00', '215.25');
+INSERT INTO flights VALUES('007', 'Los Angeles', 'Chicago', '2000','02:25:00', '07:00:00', '215.50');
+INSERT INTO flights VALUES('008', 'Chicago', 'Los Angeles', '2000','07:25:00', '11:30:00', '225.50');
+INSERT INTO flights VALUES('009', 'Los Angeles', 'Chicago', '2000','12:45:00', '16:45:00', '245.50');
+INSERT INTO flights VALUES('010', 'Chicago', 'Los Angeles', '2000','17:25:00', '21:15:00', '235.50');
+INSERT INTO flights VALUES('011', 'New York', 'Madison', '940','05:25:00', '08:45:00', '265.50');
+INSERT INTO flights VALUES('012', 'Madison', 'New York', '940','10:25:00', '13:30:00', '275.50');
+INSERT INTO flights VALUES('013', 'New York', 'Madison', '940','14:45:00', '17:45:00', '285.50');
+INSERT INTO flights VALUES('014', 'Madison', 'New York', '940','19:25:00', '22:15:00', '265.50');
+INSERT INTO flights VALUES('015', 'Los Angeles', 'Honolulu', '940','02:25:00', '07:45:00', '465.50');
+INSERT INTO flights VALUES('016', 'Honolulu', 'Los Angeles', '940','08:25:00', '13:30:00', '486.50');
+INSERT INTO flights VALUES('017', 'Los Angeles', 'Honolulu', '940','13:45:00', '18:45:00', '465.50');
+INSERT INTO flights VALUES('018', 'Honolulu', 'Los Angeles', '940','19:25:00', '23:15:00', '523.50');
+INSERT INTO flights VALUES('019', 'Newark', 'Singapore', '9520','01:25:00', '20:15:00', '1500.50');
+INSERT INTO flights VALUES('020', 'Singapore', 'Newark', '9520','20:25:00', '16:15:00', '1526.50');
+
+INSERT INTO aircrafts VALUES('101', 'Boeing 101', '500');
+INSERT INTO aircrafts VALUES('102', 'Boeing 102', '750');
+INSERT INTO aircrafts VALUES('103', 'Boeing 103', '3000');
+INSERT INTO aircrafts VALUES('104', 'Boeing 104', '6000');
+INSERT INTO aircrafts VALUES('105', 'Airbus 105', '500');
+INSERT INTO aircrafts VALUES('106', 'Airbus 106', '650');
+INSERT INTO aircrafts VALUES('107', 'Airbus 107', '950');
+INSERT INTO aircrafts VALUES('108', 'Airbus 108', '1400');
+INSERT INTO aircrafts VALUES('109', 'Airbus 109', '3200');
+INSERT INTO aircrafts VALUES('110', 'Airbus 110', '8500');
+INSERT INTO aircrafts VALUES('111', 'Airbus 111', '10000');
+
+INSERT INTO employees VALUES('201','John Doe','45000');
+INSERT INTO employees VALUES('202','Joe Smith','47000');
+INSERT INTO employees VALUES('203','Peter Parker','70000');
+INSERT INTO employees VALUES('204','Tony Stark','78000');
+INSERT INTO employees VALUES('205','Josh Adams','53000');
+INSERT INTO employees VALUES('206','Bruce Wayne','78500');
+INSERT INTO employees VALUES('207','Clark Kent','110000');
+INSERT INTO employees VALUES('208','Kevin Johnson','57500');
+INSERT INTO employees VALUES('209','Steve Green','55000');
+INSERT INTO employees VALUES('210','John Kim','300');
+INSERT INTO employees VALUES('211','Jerry Li','400');
+INSERT INTO employees VALUES('212','Nick Fury','125000');
+
+INSERT INTO certified VALUES('203','101');
+INSERT INTO certified VALUES('203','105');
+
+INSERT INTO certified VALUES('204','101');
+INSERT INTO certified VALUES('204','102');
+INSERT INTO certified VALUES('204','105');
+INSERT INTO certified VALUES('204','106');
+
+INSERT INTO certified VALUES('206','101');
+INSERT INTO certified VALUES('206','103');
+INSERT INTO certified VALUES('206','105');
+INSERT INTO certified VALUES('206','106');
+INSERT INTO certified VALUES('206','107');
+
+INSERT INTO certified VALUES('207','103');
+INSERT INTO certified VALUES('207','104');
+INSERT INTO certified VALUES('207','107');
+INSERT INTO certified VALUES('207','108');
+INSERT INTO certified VALUES('207','109');
+INSERT INTO certified VALUES('207','110');
+
+
+-- 8.1  Find the names of aircrafts such taht all pilots certified to operate
+--      them have salaries more than $80,000
+SELECT a.aname
+FROM aircrafts a
+INNER JOIN certified c ON c.aid = a.aid
+INNER JOIN employees e ON e.eid = c.eid
+WHERE e.salary > 80000;
+
+-- 8.2  For each pilot who is certified for more than three aircraft, find the eid
+--      and the maximum cruisingrange of the aircraft for which she is certified.
+SELECT c.eid, MAX(a.cruisingrange)
+FROM certified c, aircrafts a
+WHERE c.aid = a.aid
+GROUP BY c.eid
+HAVING COUNT(*) > 3;
+
+-- 8.3  Find the names of pilots whose salary is less than the pricefo the cheapest
+--      route from Los Angeles to Honolulu
+SELECT *
+FROM employees
+WHERE salary <
+  (SELECT MIN(price)
+  FROM flights
+  WHERE flight_from = 'Los Angeles' AND flight_to = 'Honolulu');
+
+-- 8.4  For all airc afts with cruisingrange over 1000 miles, find the name of
+--      the name of the aircraft and the average salary of all pilots certified
+--      for this aircraft
+SELECT *
+FROM employees e
+INNER JOIN certified c ON c.eid = e.eid
+INNER JOIN aircrafts a ON a.aid = c.aid
+WHERE a.cruisingrange > 1000;
+
+-- 8.5  Find the names of pilots certified for some Boeing aircraft.
+SELECT e.ename
+FROM employees e
+INNER JOIN certified c ON c.eid = e.eid
+INNER JOIN aircrafts a ON a.aid = c.aid
+WHERE a.aname LIKE '%Boeing 101%';
+
+-- 8.6  Find the aids of all aircraft that can be used on routes from Los Angeles
+--      to Chicago.
+SELECT aid
+FROM aircrafts
+WHERE cruisingrange > (
+  SELECT MAX(distance)
+  FROM flights
+  WHERE flight_to = "Los Angeles" and flight_from = "Chicago"
+);
+
+
+-- 8.7  Identify the routes that can be piloted by every pilot who makes more
+--      than 100,000
+SELECT *
+FROM flights
+WHERE distance <
+  (SELECT MAX(a.cruisingrange)
+  FROM employees e
+  INNER JOIN certified c on c.eid = e.eid
+  INNER JOIN aircrafts a on a.aid = c.aid
+  WHERE e.salary > 100000);
+
+-- 8.8  Print the enames of pilots who can operate planes with cruisingrange
+--      greater than 3000 but are not certified on any Boeing aircraft
+SELECT DISTINCT(e.ename)
+FROM employees e
+LEFT JOIN certified c on c.eid = e.eid
+LEFT JOIN aircrafts a on a.aid = c.aid
+WHERE a.cruisingrange > 3000 AND a.aname NOT LIKE '%Boeing%';
+
+-- 8.9  A customer wants to travel from Madison to New York with no more than
+--      two changes of flight. List the choice of departure times from Madison
+--      if the customer wants to arrive in New York by 6pm.
+SELECT *
+FROM flights
+WHERE flight_from = 'Madison'
+      and flight_to = 'New York'
+      and arrives < '18:00:00';
+
+-- 8.10 Compute the difference between teh average salary of a pilot and the
+--      average salary of all employees (including pilots)
+SELECT
+(SELECT AVG(salary) FROM employees) -
+(SELECT AVG(salary)
+FROM employees e1
+WHERE e1.eid in(
+  SELECT DISTINCT(e.eid)
+  FROM employees e
+  INNER JOIN certified c ON c.eid = e.eid
+)
+);
+
+-- 8.11 Print the name and salary of every non-pilot whose salary is more than
+--      the average salary for pilots.
+SELECT e2.ename, e2.salary
+FROM employees e2
+WHERE e2.salary >(
+  SELECT AVG(salary)
+  FROM employees e1
+  WHERE e1.eid in(
+    SELECT DISTINCT(e.eid)
+    FROM employees e
+    INNER JOIN certified c ON c.eid = e.eid
+  )
+);
+
+-- 8.12 Print the names of employees who are certified only on aircrafts with
+--      crusing range longer than 1000 miles.
+SELECT DISTINCT(e.ename)
+FROM employees e
+INNER JOIN certified c on c.eid = e.eid
+INNER JOIN aircrafts a on a.aid = c.aid
+WHERE a.cruisingrange > 1000;
+
+-- 8.12 Print the names of employees who are certified only on aircrafts with
+--      crusing range longer than 1000 miles, but on at least two such aircrafts
+SELECT e.ename, count(*)
+FROM employees e
+INNER JOIN certified c on c.eid = e.eid
+INNER JOIN aircrafts a on a.aid = c.aid
+WHERE a.cruisingrange > 1000
+GROUP BY e.ename
+HAVING COUNT(*) >= 2;
+
+-- 8.12 Print the names of employees who are certified only on aircrafts with
+--      crusing range longer than 1000 miles, and who are certified on some Boeing
+--      aircraft
+SELECT *
+FROM employees e
+INNER JOIN certified c on c.eid = e.eid
+INNER JOIN aircrafts a on a.aid = c.aid
+WHERE a.cruisingrange > 1000 and a.aname LIKE '%Boeing%';
